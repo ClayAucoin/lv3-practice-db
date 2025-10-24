@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import supabase from "../utils/supabase";
-import "./PotluckMeals.css";
 import mealsImage from "../images/meals.jpg";
 
 function PotluckMeals() {
@@ -9,21 +8,21 @@ function PotluckMeals() {
   const [meals, setMeals] = useState([]);
   const [errMsg, setErrMsg] = useState("");
 
-  useEffect(() => {
-    async function getMeals() {
-      const { data, error } = await supabase.rpc("get_potluck_meals");
+  async function handleFetch() {
+    const { data, error } = await supabase.rpc("get_potluck_meals");
 
-      if (error) {
-        console.log(error);
-        setErrMsg(error.message);
-        setMeals([]);
-        return;
-      }
-      setMeals(data);
+    if (error) {
+      console.log(error);
+      setErrMsg(error.message);
+      setMeals([]);
+      return;
     }
-
     console.log(errMsg);
-    getMeals();
+    setMeals(data);
+  }
+
+  useEffect(() => {
+    handleFetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -41,15 +40,18 @@ function PotluckMeals() {
       dish_type: dishType.toLowerCase(),
       serves: parseInt(serves),
     };
+
     const { error } = await supabase.from("potluck_meals").insert(newMeal);
 
     const response = await supabase.rpc("get_potluck_meals");
     const data = response.data;
 
-    e.target.elements.mealName.value = "";
-    e.target.elements.guestName.value = "";
-    e.target.elements.dishType.value = "";
-    e.target.elements.serves.value = "";
+    if (!isTesting) {
+      e.target.elements.mealName.value = "";
+      e.target.elements.guestName.value = "";
+      e.target.elements.dishType.value = "";
+      e.target.elements.serves.value = "";
+    }
 
     if (error) {
       console.log(error);
@@ -65,9 +67,7 @@ function PotluckMeals() {
       <div className="container m-4">
         <div className="card p-2" style={{ width: "600px" }}>
           <div className="card-body">
-            <h1 className="card-title text-center mb-4">
-              Friday's Potluck Meals
-            </h1>
+            <h1 className="card-title text-center mb-4">Friday's Potluck</h1>
 
             <div className="row">
               <div className="col-5">
@@ -149,10 +149,18 @@ function PotluckMeals() {
               </div>
 
               <div className="col-7">
+                {errMsg && <div className="alert alert-danger">{errMsg}</div>}
+                <div className="d-flex nowrap">
+                  <h2 className="flex-fill align-self-center text-center">
+                    Meals
+                  </h2>
+                  <button className="btn refresh-button" onClick={handleFetch}>
+                    🔄
+                  </button>
+                </div>
                 <div>
-                  {errMsg && <div className="alert alert-danger">{errMsg}</div>}
                   {meals.length === 0 ? (
-                    <p>No meals yet.</p>
+                    <p>No beverages yet.</p>
                   ) : (
                     <ul>
                       {meals.map((meal) => (

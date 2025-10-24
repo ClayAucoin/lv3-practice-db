@@ -8,7 +8,7 @@ function PotluckBeverages() {
   const [beverages, setBeverages] = useState([]);
   const [errMsg, setErrMsg] = useState("");
 
-  useEffect(() => {
+  async function handleFetch() {
     async function getBeverages() {
       const { data, error } = await supabase.rpc("get_potluck_beverages");
 
@@ -23,6 +23,10 @@ function PotluckBeverages() {
 
     console.log(errMsg);
     getBeverages();
+  }
+
+  useEffect(() => {
+    handleFetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -38,6 +42,7 @@ function PotluckBeverages() {
       guest_name: guestName,
       serves: parseInt(serves),
     };
+
     const { error } = await supabase
       .from("potluck_beverages")
       .insert(newBeverage);
@@ -45,9 +50,11 @@ function PotluckBeverages() {
     const response = await supabase.rpc("get_potluck_beverages");
     const data = response.data;
 
-    e.target.elements.bevName.value = "";
-    e.target.elements.guestName.value = "";
-    e.target.elements.serves.value = "";
+    if (!isTesting) {
+      e.target.elements.bevName.value = "";
+      e.target.elements.guestName.value = "";
+      e.target.elements.serves.value = "";
+    }
 
     if (error) {
       console.log(error);
@@ -63,9 +70,7 @@ function PotluckBeverages() {
       <div className="container m-4">
         <div className="card p-2" style={{ width: "600px" }}>
           <div className="card-body">
-            <h1 className="card-title text-center mb-4">
-              Friday's Potluck Beverages
-            </h1>
+            <h1 className="card-title text-center mb-4">Friday's Potluck</h1>
 
             <div className="row">
               <div className="col-5">
@@ -126,6 +131,15 @@ function PotluckBeverages() {
               </div>
 
               <div className="col-7">
+                {errMsg && <div className="alert alert-danger">{errMsg}</div>}
+                <div className="d-flex nowrap">
+                  <h2 className="flex-fill align-self-center text-center">
+                    Beverages
+                  </h2>
+                  <button className="btn refresh-button" onClick={handleFetch}>
+                    🔄
+                  </button>
+                </div>
                 <div>
                   {beverages.length === 0 ? (
                     <p>No beverages yet.</p>

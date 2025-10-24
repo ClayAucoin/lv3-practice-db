@@ -1,205 +1,255 @@
-Name(s)\***\*\*\*\*\***\*\*\***\*\*\*\*\***\_\_\_\_\***\*\*\*\*\***\*\*\***\*\*\*\*\*** Period **\_** Date **\*\***\_\_\_\_**\*\***
+# Potluck Planner (React + Supabase)
 
-|     | Activity Guide - React + Supabase Potluck App | 🍽️  |
-| :-- | :-------------------------------------------- | :-- |
-
-**Overview**  
-Build a full-stack React application with Supabase database integration. Create a potluck meal management app that demonstrates CRUD operations, form handling, and database security policies.
-
-**Model:** [Supabase Setup Guide](https://rmccrear.github.io/codex-lv3-may-2025/week5/supabase-setup/SUPABASE_SETUP_GUIDE.html)
+A tiny React app for coordinating a team potluck. Guests can add what they’re bringing (meals, beverages, utensils) and the app shows grouped lists by guest using Supabase RPCs for clean formatting.
 
 ---
 
-## Step 1 - Explore the Model
+## Project Images
 
-Review the Supabase setup guides and try the database interface.
-
-**Discuss with a Partner:**
-
-- What is a database table?
-- What are Row Level Security (RLS) policies and why do we need them?
-- How does a React app connect to a database?
-- What are SELECT and INSERT operations?
+![Meals Screen](src/images/screenshot-meals.png) ![Beverages Screen](src/images/screenshot-beverages.png) ![Utensils Screen](src/images/screenshot-utensils.png)
 
 ---
 
-## Step 2 - Plan Your Database
+## Tech Stack
 
-**Database Tables:** Fill in the table below for each table you'll need to create.
-
-| Table Name        | Purpose             | Columns Needed                              |
-| :---------------- | :------------------ | :------------------------------------------ |
-| potluck_meals     | Store meal info     | meal_name, guest_name, serves, kind_of_dish |
-| potluck_beverages | Store beverage info | beverage_name, guest_name                   |
-| potluck_utensils  | Store utensil info  | utensil_name, guest_name                    |
-|                   |                     |                                             |
-
-**Security Policies:** List the policies you'll need for each table.
-
-| Table         | Policy Type | Purpose                      |
-| :------------ | :---------- | :--------------------------- |
-| potluck_meals | SELECT      | Allow everyone to read meals |
-| potluck_meals | INSERT      | Allow everyone to add meals  |
-|               |             |                              |
-|               |             |                              |
-|               |             |                              |
+- React (Vite)
+- Supabase (Postgres + Auth + RLS)
+- Bootstrap (styling)
 
 ---
 
-## Step 3 - Plan Your Components
+## Quick Start
 
-**React Components:** Fill in the table below for each component you'll create.
+### 1) Clone & install
 
-| Component Name | Purpose               | Props Needed | State Variables |
-| :------------- | :-------------------- | :----------- | :-------------- |
-| PotluckMeals   | Display and add meals | none         | meals (array)   |
-|                |                       |              |                 |
-|                |                       |              |                 |
-|                |                       |              |                 |
-
-**Functions:** List the functions you'll need to create.
-
-| Function Name    | Component    | What It Does              |
-| :--------------- | :----------- | :------------------------ |
-| handleFetchMeals | PotluckMeals | Fetch meals from database |
-| handleAddMeal    | PotluckMeals | Add new meal to database  |
-|                  |              |                           |
-|                  |              |                           |
-|                  |              |                           |
-
----
-
-## Step 4 - Create Wireframes
-
-**Wireframes:** Sketch the layout of your app pages. Use simple boxes and labels to show where elements will go.
-
-**Main App Layout:**
-
-```
-┌─────────────────────────────────────┐
-│           Potluck App               │
-├─────────────────────────────────────┤
-│  [Fetch Meals] Button               │
-│                                     │
-│  • Meal 1 by Guest serves 4         │
-│  • Meal 2 by Guest serves 6         │
-│  • Meal 3 by Guest serves 2         │
-│                                     │
-│  ┌────────────────────────────────┐ │
-│  │        Add Meal Form           │ │
-│  │  Meal: [_____________]         │ │
-│  │  Guest: [_____________]        │ │
-│  │  Serves: [_____]               │ │
-│  │  Type: [Dropdown ▼]            │ │
-│  │  [Add Meal] Button             │ │
-│  └────────────────────────────────┘ │
-└─────────────────────────────────────┘
+```bash
+git clone https://github.com/ClayAucoin/lv3-practice-db.git
+cd lv3-practice-db
+npm install
 ```
 
-**Additional Components:** Sketch similar layouts for Beverages and Utensils components.
+### 2) Supabase project & keys
 
-Type = Main, Side, Desert
+1. Create a Supabase project at https://supabase.com
+2. Grab your **Project URL** and **anon public key**.
 
-Beverages: field beverage, from
+Create `.env.local` in your project root (Vite-style envs):
 
-Utensils: fields
+```bash
+VITE_SUPABASE_URL=https://YOUR-PROJECT-REF.supabase.co
+VITE_SUPABASE_ANON_KEY=YOUR_PUBLIC_ANON_KEY
+```
 
----
+### 3) Supabase client (utils/supabase.js)
 
-## Step 5 - Setup Your Project
+```js
+// /src/utils/supabase.js
+import { createClient } from "@supabase/supabase-js";
 
-**Create React App:**
+const supabaseUrl =
+  import.meta.env.VITE_SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL;
+const supabaseAnonKey =
+  import.meta.env.VITE_SUPABASE_ANON_KEY ||
+  process.env.REACT_APP_SUPABASE_ANON_KEY;
 
-1. Run: `npm create vite@latest practice-with-db -- --template react`
-2. Navigate to folder: `cd practice-with-db`
-3. Run: `npm install`
-4. Install Supabase: `npm install @supabase/supabase-js`
-5. Start dev server: `npm run dev`
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+export default supabase;
+```
 
-**Environment Setup:**
+### 4) Create tables, RPCs, and RLS policies
 
-1. Create `.env.local` file in project root (not `.env`)
-2. Add your Supabase credentials (you can find these in the supabase dashboard):
-   ```
-   VITE_SUPABASE_URL=your-project-url
-   VITE_SUPABASE_ANON_KEY=your-anon-key
-   ```
+Open Supabase SQL Editor and run the **Database Schema** and **RPC** blocks from the sections below. Then enable RLS and add policies (also below).
 
----
+### 5) Run the app
 
-## Step 6 - Build Your App
-
-**📖 [Complete Project Guide](./project-guide-show-me.md)** - Step-by-step instructions with code examples
-
-Follow the step-by-step guide to build your potluck app. Complete each step before moving to the next.
-
-**Core Features (Steps 1-16):**
-
-- ✅ Step 1: Initialize React project
-- ✅ Step 2: Install Supabase client
-- ✅ Step 3: Create project structure
-- ✅ Step 4: Set up Supabase database
-- ✅ Step 5: Create PotluckMeals component
-- ✅ Step 6: Add fetch button and handler
-- ✅ Step 7: Fetch data from database
-- ✅ Step 8: Display data with for loop
-- ✅ Step 9: Test data fetching
-- ✅ Step 10: Add form structure
-- ✅ Step 11: Add form event handler
-- ✅ Step 12: Create insert RLS policy
-- ✅ Step 13: Add insert statement
-- ✅ Step 14: Test insert functionality
-- ✅ Step 15: Refresh list after insert
-- ✅ Step 16: Clear form after submit
-
-**Form Enhancement (Step 17):**
-
-- ✅ Step 17: Add select dropdown for dish types
-
-**Additional Components (Steps 18-19):**
-
-- ✅ Step 18: Create Beverages table and component
-- ✅ Step 19: Create Utensils table and component
-
-**As You Code:**
-
-- Test your app frequently
-- Use `console.log()` to debug
-- Check Supabase dashboard for data changes
-- Commit your code after completing each major feature
+```bash
+npm run dev     # Vite
+```
 
 ---
 
-## Step 7 - Test Your App
+## Database Schema (Tables)
 
-Test your app and verify it works correctly for all scenarios:
+```sql
+-- Meals
+create table if not exists public.potluck_meals (
+  id bigint generated always as identity primary key,
+  guest_name varchar not null,
+  meal_name  varchar not null,
+  dish_type  varchar check (dish_type in ('entree','side','snack','dessert','drink')) not null,
+  serves     int2  check (serves >= 0) default 0,
+  created_at timestamptz not null default now()
+);
 
-| Test                     | What to Check                         |  ✓  |
-| :----------------------- | :------------------------------------ | :-: |
-| Fetch meals button       | Meals display from database           |     |
-| Add new meal             | Form submits and meal appears in list |     |
-| Form clears after submit | All input fields are empty            |     |
-| Select dropdown works    | Can choose dish type from dropdown    |     |
-| Beverages component      | Can fetch and add beverages           |     |
-| Utensils component       | Can fetch and add utensils            |     |
-| Data persists            | Data remains after page refresh       |     |
-| RLS policies work        | Can read and insert data              |     |
+-- Beverages
+create table if not exists public.potluck_beverages (
+  id bigint generated always as identity primary key,
+  guest_name    varchar not null,
+  beverage_name varchar not null,
+  serves        int2  check (serves >= 0) default 0,
+  created_at    timestamptz not null default now()
+);
 
-**Debug Using:**
-
-- Browser console (F12) for errors
-- `console.log()` to check data values
-- Supabase dashboard to verify data changes
-- Check environment variables are loaded
+-- Utensils
+create table if not exists public.potluck_utensils (
+  id bigint generated always as identity primary key,
+  guest_name   varchar not null,
+  utensil_name varchar not null,
+  serves       int2  check (serves >= 0) default 0,
+  created_at   timestamptz not null default now()
+);
+```
 
 ---
 
-## Step 8 - Submit
+## RPC Functions (Grouped display per guest)
 
-Before you submit, check the rubric below to make sure your program meets the requirements.
+These return one row per guest with a newline-joined list that the UI renders with `white-space: pre-wrap;`.
 
-| Category             | Extensive Evidence                                                          | Convincing Evidence                              | Limited Evidence                          | No Evidence                            |
-| :------------------- | :-------------------------------------------------------------------------- | :----------------------------------------------- | :---------------------------------------- | :------------------------------------- |
-| **Project Setup**    | React + Supabase project correctly set up and runs without errors.          | Project mostly works but has minor setup issues. | Project has significant setup problems.   | Project does not run.                  |
-| **Database Design**  | All three tables created with appropriate columns and RLS policies.         | Most tables created with some policy issues.     | Some tables created but missing policies. | Database not set up or missing tables. |
-| **State Management** | All state variables properly created with `useState` and updated correctly. | Most state variables work correctly b            |
+> Note: `RETURNS TABLE` column order must match your `select` list. The components expect `guest_name` and then an aggregated text column named `meal`, `beverage`, or `utensil`.
+
+```sql
+-- Meals
+create or replace function get_potluck_meals()
+returns table (
+  guest_name text,
+  meal text
+)
+language sql as $$
+  select
+    guest_name,
+    string_agg(chr(9) || meal_name || ', feeds ' || serves || ' (' || dish_type || ')', chr(10)) as meal
+  from potluck_meals
+  group by guest_name
+  order by guest_name;
+$$;
+
+-- Beverages
+create or replace function get_potluck_beverages()
+returns table (
+  guest_name text,
+  beverage text
+)
+language sql as $$
+  select
+    guest_name,
+    string_agg(chr(9) || beverage_name || ', serves ' || serves, chr(10)) as beverage
+  from potluck_beverages
+  group by guest_name
+  order by guest_name;
+$$;
+
+-- Utensils
+create or replace function get_potluck_utensils()
+returns table (
+  guest_name text,
+  utensil text
+)
+language sql as $$
+  select
+    guest_name,
+    string_agg(chr(9) || utensil_name || ' for ' || serves, chr(10)) as utensil
+  from potluck_utensils
+  group by guest_name
+  order by guest_name;
+$$;
+```
+
+---
+
+## Row Level Security (RLS) & Policies
+
+Enable RLS:
+
+```sql
+alter table public.potluck_meals enable row level security;
+alter table public.potluck_beverages enable row level security;
+alter table public.potluck_utensils enable row level security;
+```
+
+For a simple public demo (no auth), you can allow anyone to read RPCs and insert rows. For production, replace with authenticated-only policies.
+
+```sql
+-- Demo: allow inserts from anon
+create policy "insert_meals_anon" on public.potluck_meals
+for insert to anon using (true) with check (true);
+
+create policy "insert_beverages_anon" on public.potluck_beverages
+for insert to anon using (true) with check (true);
+
+create policy "insert_utensils_anon" on public.potluck_utensils
+for insert to anon using (true) with check (true);
+
+-- Demo: allow reads (RPCs run with caller rights)
+grant usage on schema public to anon;
+grant execute on function public.get_potluck_meals() to anon;
+grant execute on function public.get_potluck_beverages() to anon;
+grant execute on function public.get_potluck_utensils() to anon;
+
+-- Optional: allow direct selects (not required if you only use RPCs)
+create policy "select_meals_anon" on public.potluck_meals for select to anon using (true);
+create policy "select_beverages_anon" on public.potluck_beverages for select to anon using (true);
+create policy "select_utensils_anon" on public.potluck_utensils for select to anon using (true);
+```
+
+---
+
+## Features
+
+- Add entries for:
+  - **Meals** (guest, name, dish type, serves)
+  - **Beverages** (gueat, name, serves)
+  - **Utensils** (guest, name, serves)
+- **Grouped display by guest** using Postgres `string_agg` via RPCs.
+- **Inline refresh** button per section.
+- **Testing mode**: components prefill inputs with sample data when `isTesting = true`.
+- **Error handling**: errors from Supabase RPC/insert show as Bootstrap alerts.
+- **Clean formatting**: UI renders aggregated lines with natural newlines.
+
+---
+
+## App Structure
+
+```
+src/
+  App.jsx
+  App.css
+  components/
+    PotluckMeals.jsx
+    PotluckBeverages.jsx
+    PotluckUtensils.jsx
+  images/
+    meals.jpg
+    beverages.jpg
+    utensils.jpg
+  utils/
+    supabase.js
+```
+
+---
+
+## Seed Data (optional)
+
+```sql
+insert into public.potluck_meals (guest_name, meal_name, dish_type, serves) values
+('Bob','Meatballs','entree',8),
+('Chuck','Chips & Dip','side',6),
+('Chuck','Potato Sliders','side',10),
+('Harry','Caesar Salad','side',6),
+('Harry','Bread Sticks','side',8),
+('Janet','Cheesecake','dessert',8);
+
+insert into public.potluck_beverages (guest_name, beverage_name, serves) values
+('Bob','Iced Tea',8),
+('Janet','Sparkling Water',12);
+
+insert into public.potluck_utensils (guest_name, utensil_name, serves) values
+('Harry','Plates (pack of 50)',50),
+('Chuck','Napkins (pack of 100)',100);
+```
+
+---
+
+## License
+
+MIT

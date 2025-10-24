@@ -4,3 +4,9 @@ img {
     align-items: center;
     width: 150px;
 }
+
+.refresh-button {
+    font-size: 2em;
+    margin: 0;
+    padding: 0;
+}
