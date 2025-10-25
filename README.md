@@ -6,11 +6,9 @@ A tiny React app for coordinating a team potluck. Guests can add what they’re 
 
 ## Project Images
 
-<img src="src/images/screenshot-meals.png" alt="Meals Screen">
-<img src="src/images/screenshot-beverages.png" alt="Beverages Screen">
-<img src="src/images/screenshot-utensils.png" alt="Utensils Screen">
-
-![Meals Screen](src/images/screenshot-meals.png){width=300}![Beverages Screen](src/images/screenshot-beverages.png){width=300}![Utensils Screen](src/images/screenshot-utensils.png){width=300}
+<img src="src/images/screenshot-meals.png" alt="Meals Screen" width="250px">
+<img src="src/images/screenshot-beverages.png" alt="Beverages Screen" width="250px">
+<img src="src/images/screenshot-utensils.png" alt="Utensils Screen" width="250px">
 
 ---
 
