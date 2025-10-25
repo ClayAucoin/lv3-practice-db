@@ -173,7 +173,7 @@ function PotluckMeals() {
                 </div>
                 <div>
                   {meals.length === 0 ? (
-                    <p>No beverages yet.</p>
+                    <p>No meals yet.</p>
                   ) : (
                     <div>
                       {meals.map((meal) => (
