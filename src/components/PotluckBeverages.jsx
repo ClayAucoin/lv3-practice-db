@@ -10,7 +10,7 @@ function PotluckBeverages() {
 
   // retrieve data from potluck_beverages
   async function handleFetch() {
-    // retrieve data from potluck_beverages
+    // get data from supabase using rpc function
     const { data, error } = await supabase.rpc("get_potluck_beverages");
 
     // check for error
@@ -21,6 +21,7 @@ function PotluckBeverages() {
       return;
     }
     console.log(errMsg);
+    // update useState with latest data
     setBeverages(data);
   }
 
@@ -30,7 +31,7 @@ function PotluckBeverages() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // insert form submission into potluck_beverages
+  // handle form submission
   async function handleSubmit(e) {
     e.preventDefault();
 
@@ -46,12 +47,12 @@ function PotluckBeverages() {
       serves: parseInt(serves),
     };
 
-    // insert new data into database
+    // insert new data into potluck_beverages
     const { error } = await supabase
       .from("potluck_beverages")
       .insert(newBeverage);
 
-    // retrieve updated data from database
+    // retrieve latest data from supabase using rpc function
     const response = await supabase.rpc("get_potluck_beverages");
     const data = response.data;
 
@@ -69,6 +70,7 @@ function PotluckBeverages() {
       setBeverages([]);
       return;
     }
+    // update useState with latest data
     setBeverages(data);
   }
 
