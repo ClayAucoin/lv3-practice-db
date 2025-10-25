@@ -20,7 +20,6 @@ function PotluckUtensils() {
       setUtensils([]);
       return;
     }
-    console.log(errMsg);
     // update useState with latest data
     setUtensils(data);
   }
@@ -28,7 +27,6 @@ function PotluckUtensils() {
   // load data on open
   useEffect(() => {
     handleFetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // handle form submission

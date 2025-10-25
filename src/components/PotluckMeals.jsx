@@ -20,7 +20,6 @@ function PotluckMeals() {
       setMeals([]);
       return;
     }
-    console.log(errMsg);
     // update useState with latest data
     setMeals(data);
   }
@@ -28,7 +27,6 @@ function PotluckMeals() {
   // load data on open
   useEffect(() => {
     handleFetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // handle form submission

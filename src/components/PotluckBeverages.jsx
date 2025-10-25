@@ -20,7 +20,6 @@ function PotluckBeverages() {
       setBeverages([]);
       return;
     }
-    console.log(errMsg);
     // update useState with latest data
     setBeverages(data);
   }
@@ -28,7 +27,6 @@ function PotluckBeverages() {
   // load data on open
   useEffect(() => {
     handleFetch();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // handle form submission
