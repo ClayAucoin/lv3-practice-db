@@ -40,27 +40,11 @@ VITE_SUPABASE_URL=https://YOUR-PROJECT-REF.supabase.co
 VITE_SUPABASE_ANON_KEY=YOUR_PUBLIC_ANON_KEY
 ```
 
-### 3) Supabase client (utils/supabase.js)
-
-```js
-// /src/utils/supabase.js
-import { createClient } from "@supabase/supabase-js";
-
-const supabaseUrl =
-  import.meta.env.VITE_SUPABASE_URL || process.env.REACT_APP_SUPABASE_URL;
-const supabaseAnonKey =
-  import.meta.env.VITE_SUPABASE_ANON_KEY ||
-  process.env.REACT_APP_SUPABASE_ANON_KEY;
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-export default supabase;
-```
-
-### 4) Create tables, RPCs, and RLS policies
+### 3) Create tables, RPCs, and RLS policies
 
 Open Supabase SQL Editor and run the **Database Schema** and **RPC** blocks from the sections below. Then enable RLS and add policies (also below).
 
-### 5) Run the app
+### 4) Run the app
 
 ```bash
 npm run dev     # Vite
@@ -197,9 +181,9 @@ create policy "select_utensils_anon" on public.potluck_utensils for select to an
 ## Features
 
 - Add entries for:
-  - **Meals** (guest, name, dish type, serves)
-  - **Beverages** (gueat, name, serves)
-  - **Utensils** (guest, name, serves)
+  - **Meals** (guest, dish name, dish type, serves)
+  - **Beverages** (gueat, beverage name, serves)
+  - **Utensils** (guest, utensil name, serves)
 - **Grouped display by guest** using Postgres `string_agg` via RPCs.
 - **Inline refresh** button per section.
 - **Testing mode**: components prefill inputs with sample data when `isTesting = true`.
