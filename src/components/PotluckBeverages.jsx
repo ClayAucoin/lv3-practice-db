@@ -3,59 +3,66 @@ import supabase from "../utils/supabase";
 import beveragesImage from "../images/beverages.jpg";
 
 function PotluckBeverages() {
-  const isTesting = true;
+  const isTesting = false;
 
   const [beverages, setBeverages] = useState([]);
   const [errMsg, setErrMsg] = useState("");
 
+  // retrieve data from potluck_beverages
   async function handleFetch() {
-    async function getBeverages() {
-      const { data, error } = await supabase.rpc("get_potluck_beverages");
+    // retrieve data from potluck_beverages
+    const { data, error } = await supabase.rpc("get_potluck_beverages");
 
-      if (error) {
-        console.log(error);
-        setErrMsg(error.message);
-        setBeverages([]);
-        return;
-      }
-      setBeverages(data);
+    // check for error
+    if (error) {
+      console.log(error);
+      setErrMsg(error.message);
+      setBeverages([]);
+      return;
     }
-
     console.log(errMsg);
-    getBeverages();
+    setBeverages(data);
   }
 
+  // load data on open
   useEffect(() => {
     handleFetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // insert form submission into potluck_beverages
   async function handleSubmit(e) {
     e.preventDefault();
 
+    // get values from form
     const bevName = e.target.elements.bevName.value;
     const guestName = e.target.elements.guestName.value;
     const serves = e.target.elements.serves.value;
 
+    // create new object
     const newBeverage = {
       beverage_name: bevName,
       guest_name: guestName,
       serves: parseInt(serves),
     };
 
+    // insert new data into database
     const { error } = await supabase
       .from("potluck_beverages")
       .insert(newBeverage);
 
+    // retrieve updated data from database
     const response = await supabase.rpc("get_potluck_beverages");
     const data = response.data;
 
+    // if not testing, reset all fields to blank
     if (!isTesting) {
       e.target.elements.bevName.value = "";
       e.target.elements.guestName.value = "";
       e.target.elements.serves.value = "";
     }
 
+    // check for error
     if (error) {
       console.log(error);
       setErrMsg(error.message);

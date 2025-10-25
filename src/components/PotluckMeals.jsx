@@ -8,9 +8,12 @@ function PotluckMeals() {
   const [meals, setMeals] = useState([]);
   const [errMsg, setErrMsg] = useState("");
 
+  // retrieve data from potluck_meals
   async function handleFetch() {
+    // retrieve data from potluck_meals
     const { data, error } = await supabase.rpc("get_potluck_meals");
 
+    // check for error
     if (error) {
       console.log(error);
       setErrMsg(error.message);
@@ -21,19 +24,23 @@ function PotluckMeals() {
     setMeals(data);
   }
 
+  // load data on open
   useEffect(() => {
     handleFetch();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // insert form submission into potluck_meals
   async function handleSubmit(e) {
     e.preventDefault();
 
+    // get values from form
     const mealName = e.target.elements.mealName.value;
     const guestName = e.target.elements.guestName.value;
     const dishType = e.target.elements.dishType.value;
     const serves = e.target.elements.serves.value;
 
+    // create new object
     const newMeal = {
       meal_name: mealName,
       guest_name: guestName,
@@ -41,11 +48,14 @@ function PotluckMeals() {
       serves: parseInt(serves),
     };
 
+    // insert new data into database
     const { error } = await supabase.from("potluck_meals").insert(newMeal);
 
+    // retrieve updated data from database
     const response = await supabase.rpc("get_potluck_meals");
     const data = response.data;
 
+    // if not testing, reset all fields to blank
     if (!isTesting) {
       e.target.elements.mealName.value = "";
       e.target.elements.guestName.value = "";
@@ -53,6 +63,7 @@ function PotluckMeals() {
       e.target.elements.serves.value = "";
     }
 
+    // check for error
     if (error) {
       console.log(error);
       setErrMsg(error.message);
