@@ -154,16 +154,16 @@ function PotluckUtensils() {
                   {utensils.length === 0 ? (
                     <p>No utensils yet.</p>
                   ) : (
-                    <ul>
+                    <div>
                       {utensils.map((utensil) => (
-                        <li key={`${utensil.guest_name}`} className="mb-2">
-                          <strong>{utensil.guest_name}</strong>
+                        <div key={`${utensil.guest_name}`} className="mb-2">
+                          <span className="name">{utensil.guest_name}</span>
                           <div style={{ whiteSpace: "pre-wrap" }}>
                             {utensil.utensil}
                           </div>
-                        </li>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   )}
                 </div>
               </div>

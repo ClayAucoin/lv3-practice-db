@@ -10,3 +10,8 @@ img {
     margin: 0;
     padding: 0;
 }
+
+span.name {
+    font-weight: bold;
+    font-size: 1.2em;
+}

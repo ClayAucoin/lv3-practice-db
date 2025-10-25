@@ -151,16 +151,16 @@ function PotluckBeverages() {
                   {beverages.length === 0 ? (
                     <p>No beverages yet.</p>
                   ) : (
-                    <ul>
+                    <div>
                       {beverages.map((beverage) => (
-                        <li key={`${beverage.guest_name}`} className="mb-2">
-                          <strong>{beverage.guest_name}</strong>
+                        <div key={`${beverage.guest_name}`} className="mb-2">
+                          <span className="name">{beverage.guest_name}</span>
                           <div style={{ whiteSpace: "pre-wrap" }}>
                             {beverage.beverage}
                           </div>
-                        </li>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   )}
                 </div>
               </div>
